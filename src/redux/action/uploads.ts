@@ -15,7 +15,10 @@ export const setUploads = (upload: Upload[]): AppActions => ({
   upload,
 });
 
-export const editUpload = (upload: Upload): AppActions => ({
+export const editUpload = (upload: {
+  id: string;
+  label: string;
+}): AppActions => ({
   type: "EDIT_UPLOAD",
   upload,
 });
@@ -44,43 +47,42 @@ export const startCreateUpload = (upload: Upload) => {
 
 export const startSetUploads = () => {
   let userId = getUserId();
-  return (dispatch: Dispatch<AppActions>, getState: () => AppState) => {
-    axiosCall(`/uploads/${userId}`, "GET").then((res) => {
-      let uploads: Upload[] = [];
-      let sharedUploads: SharedUpload[] = [];
-      res.data.userUploads.map(
-        (upload: {
-          _id: string;
-          label: string;
-          fileName: string;
-          sharedTo: [];
-        }) =>
-          uploads.push({
-            id: upload._id,
-            label: upload.label,
-            fileName: upload.fileName,
-            sharedTo: upload.sharedTo,
-          })
-      );
+  return async (dispatch: Dispatch<AppActions>, getState: () => AppState) => {
+    const uploadsList = await axiosCall(`/uploads/${userId}`, "GET");
+    const sharedUploadsList = await axiosCall(
+      `/uploads/shared/${userId}`,
+      "GET"
+    );
 
-      res.data.sharedFile.map(
-        (shared: {
-          _id: string;
-          label: string;
-          fileName: string;
-          sharedBy: string;
-        }) =>
-          sharedUploads.push({
-            id: shared._id,
-            label: shared.label,
-            fileName: shared.fileName,
-            sharedBy: shared.sharedBy,
-          })
-      );
+    let uploads: Upload[] = [];
+    let sharedUploads: SharedUpload[] = [];
 
-      dispatch(setUploads(uploads));
-      dispatch(setSharedUploads(sharedUploads));
-    });
+    uploadsList.data.map(
+      (upload: { id: string; label: string; fileName: string; sharedTo: [] }) =>
+        uploads.push({
+          id: upload.id,
+          label: upload.label,
+          fileName: upload.fileName,
+          sharedTo: upload.sharedTo,
+        })
+    );
+    sharedUploadsList.data.map(
+      (shared: {
+        _id: string;
+        label: string;
+        fileName: string;
+        sharedBy: string;
+      }) =>
+        sharedUploads.push({
+          id: shared._id,
+          label: shared.label,
+          fileName: shared.fileName,
+          sharedBy: shared.sharedBy,
+        })
+    );
+
+    dispatch(setUploads(uploads));
+    dispatch(setSharedUploads(sharedUploads));
   };
 };
 
@@ -92,10 +94,10 @@ export const startDeleteUpload = (id: string) => {
   };
 };
 
-export const startEditUpload = (upload: Upload) => {
+export const startEditUpload = (upload: { id: string; label: string }) => {
   return (dispatch: Dispatch<AppActions>, getState: () => AppState) => {
     axiosCall(`/uploads/update/${upload.id}`, "PATCH", upload).then((res) => {
-      dispatch(editUpload(upload));
+      dispatch(editUpload({ id: upload.id, label: upload.label }));
     });
   };
 };

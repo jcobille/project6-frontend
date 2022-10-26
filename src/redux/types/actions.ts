@@ -95,7 +95,7 @@ export interface SetSharedUploadAction {
 
 export interface EditUploadAction {
   type: typeof EDIT_UPLOAD;
-  upload: Upload;
+  upload: { id: string; label: string };
 }
 
 export interface DeleteUploadAction {
@@ -103,7 +103,12 @@ export interface DeleteUploadAction {
   id: string;
 }
 
-export type UploadActionType = CreateUploadAction | SetUploadAction | SetSharedUploadAction | EditUploadAction | DeleteUploadAction;
+export type UploadActionType =
+  | CreateUploadAction
+  | SetUploadAction
+  | SetSharedUploadAction
+  | EditUploadAction
+  | DeleteUploadAction;
 
 // Page
 export const CHANGE_PAGE = "CHANGE_PAGE";
@@ -123,4 +128,9 @@ export interface LogoutUserAction {
 
 export type LogoutUserType = LogoutUserAction;
 
-export type AppActions = UserActionTypes | ChangePageAction | UploadActionType | ChatActionTypes | LogoutUserType;
+export type AppActions =
+  | UserActionTypes
+  | ChangePageAction
+  | UploadActionType
+  | ChatActionTypes
+  | LogoutUserType;

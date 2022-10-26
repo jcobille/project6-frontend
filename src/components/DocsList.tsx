@@ -103,7 +103,7 @@ const DocsList = () => {
   useEffect(() => {
     dispatch(startSetUploads());
   }, []);
-
+  
   return (
     <>
       <section className="full-section">

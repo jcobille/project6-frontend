@@ -24,7 +24,7 @@ const tableRow = ({
   setEdit = () => {},
   setDelete,
 }: RowProps) => {
-  const downloadLink = "http://localhost:3002/uploads/download/";
+  const downloadLink = "http://localhost:3000/uploads/download/";
   const userId = getUserId();
   return (
     <div className="table-row">
@@ -39,7 +39,9 @@ const tableRow = ({
                   key={key}
                 >
                   <a
-                    href={`${downloadLink}${data.id}`}
+                    href={`${downloadLink}${
+                      data[column.key as keyof typeof data]
+                    }`}
                     className="btn-link"
                     download
                   >

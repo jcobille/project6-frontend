@@ -52,7 +52,7 @@ export const axiosCallFile = async (
 
   let options = {
     method: method,
-    url: `http://localhost:3002${url}`,
+    url: `http://localhost:3000${url}`,
     data: formData,
     headers: {},
   };
